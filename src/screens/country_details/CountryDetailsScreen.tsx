@@ -1,6 +1,5 @@
-import React, { Dispatch, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Country } from '../../network/data/CountryInterface'
-import { clearCountryDetails, getCountryDetails } from '../../store/country_details/actions'
 import styles from './styles'
 import CountryDetailsView from './components/country_details_view/CountryDetailsView'
 // @ts-ignore
@@ -9,34 +8,35 @@ import { View } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { waitForRenderOptions } from '../../utils/navigationUtils'
 import { colors } from '../../assets/colors'
-import { useDispatch, useGlobalState } from '../../store/configureStore'
-import { Action } from '../../store/ActionInterface'
+import { inject, observer } from 'mobx-react'
+import CountryDetails from '../../stores/countryDetailsStore'
 
-type Props = OwnProps
+type Props = OwnProps & PropsFromStore
 
 export interface OwnProps {
     componentId?: string
     country: Country
 }
 
-const CountryDetailsScreen = ({ country: { alpha2Code } }: Props) => {
-    const dispatch: Dispatch<Action> = useDispatch()
-    const { data: countryDetails, loading } = useGlobalState('countryDetails')
+interface PropsFromStore {
+    countryDetails: CountryDetails
+}
 
+const CountryDetailsScreen = ({ country: { alpha2Code }, countryDetails }: Props) => {
     useEffect(() => {
-        dispatch(getCountryDetails(alpha2Code))
+        countryDetails.getCountryDetails(alpha2Code)
     }, [])
 
     useEffect(() => {
         return () => {
-            dispatch(clearCountryDetails())
+            countryDetails.clearCountryDetails()
         }
-    })
+    }, [])
 
     return (
         <View style={styles.container}>
-            <CountryDetailsView country={countryDetails} />
-            <Spinner visible={loading} color={colors.primary} />
+            <CountryDetailsView country={countryDetails.data} />
+            <Spinner visible={countryDetails.loading} color={colors.primary} />
         </View>
     )
 }
@@ -50,4 +50,4 @@ CountryDetailsScreen.options = ({ country: { name } }: Props): Options => ({
     },
 })
 
-export default CountryDetailsScreen
+export default inject('countryDetails')(observer(CountryDetailsScreen))

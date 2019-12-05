@@ -1,11 +1,6 @@
-import React, { Dispatch, ReactElement, useEffect } from 'react'
+import React, { ReactElement, useEffect } from 'react'
 import { Country } from '../../network/data/CountryInterface'
 import { Region } from '../../network/data/RegionType'
-import {
-    clearCountriesByRegion,
-    getCountriesByRegion,
-} from '../../store/countries_by_region/actions'
-import { clearAllCountries, getAllCountries } from '../../store/all_countries/actions'
 import { Text, View } from 'react-native'
 import styles from './styles'
 import CountriesList from './countries_list/CountriesList'
@@ -16,10 +11,12 @@ import { Navigation, Options } from 'react-native-navigation'
 import { COUNTRY_DETAILS_SCREEN } from '../screens'
 import { colors } from '../../assets/colors'
 import { waitForRenderOptions } from '../../utils/navigationUtils'
-import { useDispatch, useGlobalState } from '../../store/configureStore'
-import { Action } from '../../store/ActionInterface'
+import { inject, observer } from 'mobx-react'
+import AllCountriesStore from '../../stores/allCountriesStore'
+import CountriesByRegionStore from '../../stores/countriesByRegionStore'
+import { toJS } from 'mobx'
 
-type Props = OwnProps
+type Props = OwnProps & PropsFromStore
 
 export interface OwnProps {
     componentId?: string
@@ -27,32 +24,37 @@ export interface OwnProps {
     countriesType: CountriesType
 }
 
+interface PropsFromStore {
+    allCountries: AllCountriesStore
+    countriesByRegion: CountriesByRegionStore
+}
+
 export type CountriesType = 'all_countries' | 'countries_by_region'
 
-const CountriesScreen = ({ countriesType, region, componentId }: Props) => {
-    const dispatch: Dispatch<Action> = useDispatch()
-    const { data: allCountries, error: allCountriesError } = useGlobalState('allCountries')
-    const { data: countriesByRegion, error: countriesByRegionError } = useGlobalState(
-        'countriesByRegion',
-    )
-    const loading: boolean =
-        useGlobalState('allCountries').loading || useGlobalState('countriesByRegion').loading
+const CountriesScreen = ({
+    countriesType,
+    region,
+    componentId,
+    allCountries,
+    countriesByRegion,
+}: Props) => {
+    const loading = allCountries.loading || countriesByRegion.loading
 
     useEffect(() => {
         switch (countriesType) {
             case 'all_countries':
-                dispatch(getAllCountries())
+                allCountries.getAllCountries()
                 break
             case 'countries_by_region':
-                dispatch(getCountriesByRegion(region))
+                countriesByRegion.getCountriesByRegion(region)
                 break
         }
     }, [])
 
     useEffect(() => {
         return () => {
-            dispatch(clearAllCountries())
-            dispatch(clearCountriesByRegion())
+            allCountries.clearAllCountries()
+            countriesByRegion.clearCountriesByRegion()
         }
     }, [])
 
@@ -61,10 +63,10 @@ const CountriesScreen = ({ countriesType, region, componentId }: Props) => {
 
         switch (countriesType) {
             case 'all_countries':
-                error = allCountriesError
+                error = allCountries.error
                 break
             case 'countries_by_region':
-                error = countriesByRegionError
+                error = countriesByRegion.error
                 break
         }
 
@@ -77,31 +79,28 @@ const CountriesScreen = ({ countriesType, region, componentId }: Props) => {
 
     const isError = (): boolean => {
         let isError: boolean = false
-
         switch (countriesType) {
             case 'all_countries':
-                isError = !!allCountriesError
+                isError = !!allCountries.error
                 break
             case 'countries_by_region':
-                isError = !!countriesByRegionError
+                isError = !!countriesByRegion.error
                 break
         }
-
         return isError
     }
 
     const getCountries = (): Country[] => {
-        let countries: Country[] = allCountries
+        let countries: Country[] = allCountries.data
 
         switch (countriesType) {
             case 'all_countries':
-                countries = allCountries
+                countries = allCountries.data
                 break
             case 'countries_by_region':
-                countries = countriesByRegion
+                countries = countriesByRegion.data
                 break
         }
-
         return countries
     }
 
@@ -110,17 +109,16 @@ const CountriesScreen = ({ countriesType, region, componentId }: Props) => {
             component: {
                 name: COUNTRY_DETAILS_SCREEN,
                 passProps: {
-                    country: getCountries()[index],
+                    country: toJS(getCountries())[index],
                 },
             },
         }).catch()
-
     return (
         <View style={styles.container}>
             {isError() ? (
                 getErrorView()
             ) : (
-                <CountriesList countries={getCountries()} onCountryPress={handleCountryPress} />
+                <CountriesList countries={toJS(getCountries())} onCountryPress={handleCountryPress} />
             )}
             <Spinner visible={loading} color={colors.primary} />
         </View>
@@ -165,4 +163,4 @@ const getTitle = (countriesType: CountriesType, region: Region): string => {
     }
 }
 
-export default CountriesScreen
+export default inject('allCountries', 'countriesByRegion')(observer(CountriesScreen))

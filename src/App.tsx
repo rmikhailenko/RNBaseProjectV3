@@ -3,7 +3,9 @@ import setI18nConfig from './assets/localization/setI18nConfig'
 import * as RNLocalize from 'react-native-localize'
 import { SafeAreaView, StatusBar } from 'react-native'
 import baseStyles from './components/baseStyles'
-import { Provider } from './store/configureStore'
+// import { Provider } from './store/configureStore'
+import { Provider } from 'mobx-react'
+import storeRoot from './stores/rootStore'
 
 StatusBar.setBarStyle('light-content', false)
 
@@ -29,7 +31,7 @@ const AppProvider = <P extends Props>(Component: React.ComponentType<P>) => {
         }, [])
 
         return (
-            <Provider>
+            <Provider {...storeRoot}>
                 <SafeAreaView style={baseStyles.container}>
                     <Component {...(props as P)} />
                 </SafeAreaView>

@@ -4,6 +4,7 @@ import { Text, TextStyle, TouchableOpacity, View } from 'react-native'
 import styles from './styles'
 import LinearGradient from 'react-native-linear-gradient'
 import { colors } from '../../../assets/colors'
+import testIDs from '../../../../e2e/testIDs/testID'
 
 const selectedGradientColors: string[] = ['rgba(0, 54, 167, 0.8)', colors.primary]
 const notSelectedGradientColors: string[] = ['white', 'white']
@@ -32,6 +33,7 @@ const CountriesListCell = ({
 
     return (
         <TouchableOpacity
+            testID={testIDs.menuScreen.all_countries.item('Angola')}
             activeOpacity={1}
             onPress={handleCountryPress}
             onPressIn={handlePressIn}

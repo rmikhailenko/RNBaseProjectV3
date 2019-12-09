@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react'
 import { Country } from '../../../network/data/CountryInterface'
 import CountriesListCell from './CountriesListCell'
 import { FlatList } from 'react-native'
+import testIDs from '../../../../e2e/testIDs/testID'
 
 export interface Props {
     countries: Country[]
@@ -24,7 +25,14 @@ const CountriesList = ({ countries, onCountryPress }: Props): ReactElement<any> 
     )
     const keyExtractor = ({ id }: Country): string => id
 
-    return <FlatList data={countries} renderItem={getRenderItem} keyExtractor={keyExtractor} />
+    return (
+        <FlatList
+            testID={testIDs.menuScreen.all_countries.container}
+            data={countries}
+            renderItem={getRenderItem}
+            keyExtractor={keyExtractor}
+        />
+    )
 }
 CountriesList.defaultProps = defaultProps
 

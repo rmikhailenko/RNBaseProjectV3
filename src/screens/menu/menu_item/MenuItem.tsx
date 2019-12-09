@@ -4,6 +4,7 @@ import styles from './styles'
 import FastImage from 'react-native-fast-image'
 import i18n from 'i18n-js'
 import imgs from '../../../assets/imgs/imgs'
+import testIDs from '../../../../e2e/testIDs/testID'
 
 export type MenuItemOption = 'all_countries' | 'countries_by_region'
 
@@ -22,8 +23,11 @@ const MenuItem = ({ menuItemOption, bottomDivider, onMenuItemPress }: Props): Re
     const handleMenuItemPress = (): void => onMenuItemPress && onMenuItemPress(menuItemOption)
 
     return (
-        <View style={styles.container}>
-            <TouchableOpacity onPress={handleMenuItemPress} style={styles.contentContainer}>
+        <View testID={testIDs.menuScreen.item.container(menuItemOption)} style={styles.container}>
+            <TouchableOpacity
+                testID={testIDs.menuScreen.item.button(menuItemOption)}
+                onPress={handleMenuItemPress}
+                style={styles.contentContainer}>
                 <View style={styles.menuImgContainer}>{getMenuImg(menuItemOption)}</View>
                 <View style={styles.menuTextContainer}>
                     <Text style={styles.menuText}>{getMenuItemText(menuItemOption)}</Text>

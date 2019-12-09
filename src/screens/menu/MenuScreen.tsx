@@ -5,6 +5,7 @@ import styles from './styles'
 import { Navigation, Options } from 'react-native-navigation'
 import { waitForRenderOptions } from '../../utils/navigationUtils'
 import { COUNTRIES_SCREEN, SELECT_REGION_SCREEN } from '../screens'
+import testIDs from '../../../e2e/testIDs/testID'
 
 interface Props {
     componentId?: string,
@@ -41,7 +42,7 @@ const MenuScreen = ({componentId}: Props) => {
             }).catch()
     
     return (
-        <View style={styles.container}>
+        <View testID={testIDs.menuScreen.container} style={styles.container}>
             <MenuItem
                 menuItemOption={'all_countries'}
                 onMenuItemPress={handleMenuPress}

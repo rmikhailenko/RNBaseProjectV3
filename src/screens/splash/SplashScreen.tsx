@@ -9,6 +9,7 @@ import imgs from '../../assets/imgs/imgs'
 import { Navigation, Options } from 'react-native-navigation'
 import { waitForRenderOptions } from '../../utils/navigationUtils'
 import { MENU_SCREEN } from '../screens'
+import testIDs from '../../../e2e/testIDs/testID'
 
 const SPLASH_DURATION: number = 2000
 
@@ -45,7 +46,7 @@ class SplashScreen extends React.Component<Props, State> {
         )}: ${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`
 
         return (
-            <View style={styles.container}>
+            <View testID={testIDs.splash.container} style={styles.container}>
                 <FastImage
                     source={imgs.logo_white}
                     style={styles.logo}

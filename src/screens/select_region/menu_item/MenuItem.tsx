@@ -5,6 +5,7 @@ import { Region } from '../../../network/data/RegionType'
 import FastImage from 'react-native-fast-image'
 import i18n from 'i18n-js'
 import imgs from '../../../assets/imgs/imgs'
+import testIDs from '../../../../e2e/testIDs/testID'
 
 export interface Props {
     onMenuItemPress?: (region: Region) => void
@@ -20,7 +21,7 @@ const defaultProps: Props = {
 const MenuItem = ({ onMenuItemPress, region, bottomDivider }: Props): ReactElement<any> => {
     const handleMenuItemPress = (): void => onMenuItemPress && onMenuItemPress(region)
     return (
-        <View style={styles.container}>
+        <View testID={testIDs.menuScreen.selectedRegion.item(region)} style={styles.container}>
             <TouchableOpacity onPress={handleMenuItemPress} style={styles.contentContainer}>
                 <View style={styles.menuImgContainer}>{getMenuImg(region)}</View>
                 <View style={styles.menuTextContainer}>

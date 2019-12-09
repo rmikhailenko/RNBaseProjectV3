@@ -6,6 +6,8 @@ import { Region } from '../../network/data/RegionType'
 import { Navigation, Options } from 'react-native-navigation'
 import { waitForRenderOptions } from '../../utils/navigationUtils'
 import { COUNTRIES_SCREEN } from '../screens'
+// @ts-ignore
+import testIDs from '../../../e2e/testIDs/testID'
 
 interface Props {
     componentId?: string
@@ -24,7 +26,7 @@ const SelectRegionScreen = ({ componentId }: Props) => {
         }).catch()
 
     return (
-        <View style={styles.container}>
+        <View testID={testIDs.menuScreen.selectedRegion.container} style={styles.container}>
             <MenuItem region={'africa'} onMenuItemPress={handleMenuPress} bottomDivider={true} />
             <MenuItem region={'americas'} onMenuItemPress={handleMenuPress} bottomDivider={true} />
             <MenuItem region={'asia'} onMenuItemPress={handleMenuPress} bottomDivider={true} />
